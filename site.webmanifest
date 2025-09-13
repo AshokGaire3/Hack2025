@@ -1,0 +1,18 @@
+{
+    "name": "OPT Lab - Options Trading Simulator",
+    "short_name": "OPT Lab",
+    "description": "Master options trading with advanced simulation, real-time pricing, and competitive leaderboards.",
+    "icons": [
+        {
+            "src": "/favicon.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "theme_color": "#000000",
+    "background_color": "#ffffff",
+    "display": "standalone",
+    "start_url": "/",
+    "scope": "/"
+}
