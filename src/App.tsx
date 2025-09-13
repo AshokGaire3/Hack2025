@@ -7,6 +7,7 @@ import Layout from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
 import Trading from "./pages/Trading";
 import Portfolio from "./pages/Portfolio";
+import StrategyAnalyzer from "./pages/StrategyAnalyzer";
 import Quiz from "./pages/Quiz";
 import Leaderboard from "./pages/Leaderboard";
 import Auth from "./pages/Auth";
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/" element={<Layout><Dashboard /></Layout>} />
           <Route path="/trading" element={<Layout><Trading /></Layout>} />
           <Route path="/portfolio" element={<Layout><Portfolio /></Layout>} />
+          <Route path="/strategy" element={<Layout><StrategyAnalyzer /></Layout>} />
           <Route path="/quiz" element={<Layout><Quiz /></Layout>} />
           <Route path="/leaderboard" element={<Layout><Leaderboard /></Layout>} />
           <Route path="*" element={<NotFound />} />

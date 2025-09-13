@@ -15,13 +15,15 @@ import {
   Activity,
   Zap,
   LogOut,
-  Loader2
+  Loader2,
+  Lightbulb
 } from 'lucide-react';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: TrendingUp },
   { name: 'Trading', href: '/trading', icon: Activity },
   { name: 'Portfolio', href: '/portfolio', icon: Briefcase },
+  { name: 'Strategy', href: '/strategy', icon: Lightbulb },
   { name: 'Quiz', href: '/quiz', icon: Brain },
   { name: 'Leaderboard', href: '/leaderboard', icon: Trophy },
 ];
