@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useAuth } from '@/hooks/useAuth';
+import NewsNotification from '@/components/NewsNotification';
 import { 
   TrendingUp, 
   Target, 
@@ -102,8 +103,13 @@ export default function Layout({ children }: LayoutProps) {
                 );
               })}
               
-              {/* Theme Toggle */}
+              {/* News Notification */}
               <div className="ml-4">
+                <NewsNotification />
+              </div>
+              
+              {/* Theme Toggle */}
+              <div className="ml-2">
                 <ThemeToggle />
               </div>
               
@@ -160,17 +166,23 @@ export default function Layout({ children }: LayoutProps) {
                 );
               })}
               
-              {/* Mobile Theme Toggle and Sign Out */}
-              <div className="border-t border-border pt-2 mt-2 flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <ThemeToggle />
-                  <span className="text-sm text-muted-foreground">Theme</span>
+              {/* Mobile Actions */}
+              <div className="border-t border-border pt-2 mt-2 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <NewsNotification />
+                    <span className="text-sm text-muted-foreground">News</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <ThemeToggle />
+                    <span className="text-sm text-muted-foreground">Theme</span>
+                  </div>
                 </div>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={handleSignOut}
-                  className="text-muted-foreground"
+                  className="w-full text-muted-foreground"
                 >
                   <LogOut className="h-4 w-4 mr-2" />
                   Sign Out
