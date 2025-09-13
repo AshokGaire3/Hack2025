@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { useAuth } from '@/hooks/useAuth';
 import { SupabaseService, type Quiz } from '@/services/supabaseService';
+import { calculateLevel } from '@/lib/trading';
 import { Brain, CheckCircle, XCircle, Zap, Trophy, BookOpen } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
@@ -180,7 +181,7 @@ export default function QuizPage() {
               setUserProfile({
                 ...userProfile,
                 total_xp: (userProfile.total_xp || 0) + currentQuiz.xp_reward,
-                level: Math.floor(((userProfile.total_xp || 0) + currentQuiz.xp_reward) / 100) + 1
+                level: calculateLevel((userProfile.total_xp || 0) + currentQuiz.xp_reward)
               });
             }
           }
@@ -212,7 +213,7 @@ export default function QuizPage() {
           setUserProfile({
             ...userProfile,
             total_xp: (userProfile.total_xp || 0) + currentQuiz.xp_reward,
-            level: Math.floor(((userProfile.total_xp || 0) + currentQuiz.xp_reward) / 1000) + 1
+            level: calculateLevel((userProfile.total_xp || 0) + currentQuiz.xp_reward)
           });
         }
         
@@ -321,7 +322,7 @@ export default function QuizPage() {
             </div>
             <div className="text-right">
               <p className="text-sm text-muted-foreground">Level {userProfile?.level || 1}</p>
-              <p className="text-lg font-bold text-accent">{(userProfile?.total_xp || 0) % 100} / 100 XP</p>
+              <p className="text-lg font-bold text-accent">{userProfile?.total_xp || 0} XP</p>
             </div>
           </div>
           <Progress value={quizzes.length > 0 ? (completedAttempts.length / quizzes.length) * 100 : 0} className="h-2" />

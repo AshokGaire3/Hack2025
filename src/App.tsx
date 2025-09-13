@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
+import Learning from "./pages/Learning";
 import Trading from "./pages/Trading";
 import Portfolio from "./pages/Portfolio";
 import StrategyAnalyzer from "./pages/StrategyAnalyzer";
@@ -18,7 +19,7 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider defaultTheme="system" storageKey="opt-lab-theme">
+    <ThemeProvider defaultTheme="light" storageKey="opt-lab-theme">
       <TooltipProvider>
         <Toaster />
         <Sonner />
@@ -29,6 +30,7 @@ const App = () => (
           
           {/* Protected routes - wrapped with layout */}
           <Route path="/" element={<Layout><Dashboard /></Layout>} />
+          <Route path="/learning" element={<Layout><Learning /></Layout>} />
           <Route path="/trading" element={<Layout><Trading /></Layout>} />
           <Route path="/portfolio" element={<Layout><Portfolio /></Layout>} />
           <Route path="/strategy" element={<Layout><StrategyAnalyzer /></Layout>} />

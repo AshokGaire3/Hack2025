@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Loader2, Lightbulb, TrendingUp, TrendingDown, Shield, Zap } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { SupabaseService } from '@/services/supabaseService';
+import { calculateLevel } from '@/lib/trading';
 import { toast } from '@/hooks/use-toast';
 
 // Trading scenarios from the Flask app
@@ -303,7 +304,7 @@ const StrategyAnalyzer: React.FC = () => {
           
           // Update local profile state
           const newTotalXP = (userProfile.total_xp || 0) + xpEarned;
-          const newLevel = Math.floor(newTotalXP / 100) + 1;
+          const newLevel = calculateLevel(newTotalXP);
           
           setUserProfile({
             ...userProfile,
@@ -324,7 +325,7 @@ const StrategyAnalyzer: React.FC = () => {
           console.log('XP update failed, using local state');
           // Update local state even if database fails
           const newTotalXP = (userProfile.total_xp || 0) + xpEarned;
-          const newLevel = Math.floor(newTotalXP / 100) + 1;
+          const newLevel = calculateLevel(newTotalXP);
           
           setUserProfile({
             ...userProfile,
@@ -401,7 +402,7 @@ const StrategyAnalyzer: React.FC = () => {
             <p className="text-sm text-muted-foreground">Level {userProfile.level || 1}</p>
             <p className="text-2xl font-bold text-accent">{userProfile.total_xp || 0} XP</p>
             <p className="text-xs text-muted-foreground">
-              {100 - ((userProfile.total_xp || 0) % 100)} XP to next level
+              {userProfile.level * 500 - (userProfile.total_xp || 0)} XP to next level
             </p>
           </div>
         )}

@@ -31,8 +31,15 @@ export default function Trading() {
     strikePrice: 150.00,
     timeToExpiry: 0.25, // 3 months
     riskFreeRate: 0.05,
-    volatility: 0.25,
+    volatility: 0.25, // Default volatility since user can't change it
     optionType: 'call'
+  });
+  
+  // Add state for expiration date
+  const [expirationDate, setExpirationDate] = useState(() => {
+    const date = new Date();
+    date.setMonth(date.getMonth() + 3); // Default to 3 months from now
+    return date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
   });
   const [contracts, setContracts] = useState(1);
   const [stockHistory] = useState(() => generateMockPrices(selectedStock));
@@ -40,6 +47,20 @@ export default function Trading() {
   useEffect(() => {
     setOptionParams(prev => ({ ...prev, stockPrice }));
   }, [stockPrice]);
+
+  // Initialize timeToExpiry based on default expiration date
+  useEffect(() => {
+    const today = new Date();
+    const expiry = new Date(expirationDate);
+    const timeDiff = expiry.getTime() - today.getTime();
+    const daysToExpiry = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    const yearsToExpiry = daysToExpiry / 365.25;
+    
+    setOptionParams(prev => ({ 
+      ...prev, 
+      timeToExpiry: Math.max(yearsToExpiry, 0.001)
+    }));
+  }, []); // Run only once on mount
 
   useEffect(() => {
     // Simulate live price updates
@@ -184,34 +205,28 @@ export default function Trading() {
               </Select>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="expiry">Time to Expiry (Years)</Label>
-                <Input
-                  id="expiry"
-                  type="number"
-                  step="0.01"
-                  value={optionParams.timeToExpiry}
-                  onChange={(e) => setOptionParams(prev => ({ 
+            <div>
+              <Label htmlFor="expiry">Expiration Date</Label>
+              <Input
+                id="expiry"
+                type="date"
+                value={expirationDate}
+                min={new Date().toISOString().split('T')[0]} // Prevent past dates
+                onChange={(e) => {
+                  setExpirationDate(e.target.value);
+                  // Calculate time to expiry in years
+                  const today = new Date();
+                  const expiry = new Date(e.target.value);
+                  const timeDiff = expiry.getTime() - today.getTime();
+                  const daysToExpiry = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                  const yearsToExpiry = daysToExpiry / 365.25;
+                  
+                  setOptionParams(prev => ({ 
                     ...prev, 
-                    timeToExpiry: Number(e.target.value) 
-                  }))}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="volatility">Volatility (%)</Label>
-                <Input
-                  id="volatility"
-                  type="number"
-                  step="0.01"
-                  value={optionParams.volatility * 100}
-                  onChange={(e) => setOptionParams(prev => ({ 
-                    ...prev, 
-                    volatility: Number(e.target.value) / 100 
-                  }))}
-                />
-              </div>
+                    timeToExpiry: Math.max(yearsToExpiry, 0.001) // Minimum 1 day
+                  }));
+                }}
+              />
             </div>
 
             <div>

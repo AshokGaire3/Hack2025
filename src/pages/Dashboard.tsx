@@ -3,9 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { SupabaseService } from '@/services/supabaseService';
+import { getCurrentLevelProgress } from '@/lib/trading';
 import { formatCurrency, formatPercentage } from '@/lib/trading';
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { TrendingUp, TrendingDown, DollarSign, Target, Award, Zap } from 'lucide-react';
+import { TrendingUp, TrendingDown } from 'lucide-react';
+import WelcomeToLearning from '@/components/WelcomeToLearning';
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -116,42 +118,35 @@ export default function Dashboard() {
     );
   }
 
-  const xpProgress = ((userProfile.total_xp || 0) % 100) / 100 * 100;
+  const levelProgress = getCurrentLevelProgress(userProfile.total_xp || 0);
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            Trading Dashboard
-          </h1>
-          <p className="text-muted-foreground">Welcome back, {userProfile.username}</p>
-        </div>
-        <div className="flex items-center space-x-4">
-          <div className="text-right">
-            <p className="text-sm text-muted-foreground">Level {userProfile.level || 1}</p>
-            <p className="text-2xl font-bold text-accent">{(userProfile.total_xp || 0).toLocaleString()} XP</p>
-          </div>
-          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-accent p-1">
-            <div className="w-full h-full rounded-full bg-background flex items-center justify-center">
-              <Award className="w-8 h-8 text-accent" />
-            </div>
-          </div>
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-foreground mb-2">
+          Trading Dashboard
+        </h1>
+        <p className="text-muted-foreground mb-4">Welcome back, {userProfile.username}</p>
+        <div className="text-sm text-muted-foreground">
+          Level {userProfile.level || 1} • {(userProfile.total_xp || 0).toLocaleString()} XP
         </div>
       </div>
 
       {/* XP Progress */}
-      <Card className="glow-trading">
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium">Progress to Level {(userProfile.level || 1) + 1}</span>
-            <span className="text-sm text-muted-foreground">{(userProfile.total_xp || 0) % 100} / 100 XP</span>
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="text-base">Level Progress</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between mb-2 text-sm">
+            <span>Level {(userProfile.level || 1) + 1}</span>
+            <span className="text-muted-foreground">{levelProgress.current} / {levelProgress.required} XP</span>
           </div>
           <div className="w-full bg-secondary rounded-full h-2">
             <div 
-              className="bg-gradient-to-r from-primary to-accent h-2 rounded-full transition-all duration-500"
-              style={{ width: `${xpProgress}%` }}
+              className="bg-primary h-2 rounded-full"
+              style={{ width: `${levelProgress.progress}%` }}
             />
           </div>
         </CardContent>
@@ -159,24 +154,19 @@ export default function Dashboard() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="relative overflow-hidden">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <Card>
+          <CardHeader>
             <CardTitle className="text-sm font-medium">Total Balance</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-primary">{formatCurrency(userProfile.balance || 10000)}</div>
-            <p className="text-xs text-profit flex items-center">
-              <TrendingUp className="h-3 w-3 mr-1" />
-              +2.1% from last week
-            </p>
+            <div className="text-2xl font-bold">{formatCurrency(userProfile.balance || 10000)}</div>
+            <p className="text-xs text-muted-foreground">+2.1% from last week</p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader>
             <CardTitle className="text-sm font-medium">Active Positions</CardTitle>
-            <Target className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">0</div>
@@ -185,29 +175,32 @@ export default function Dashboard() {
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader>
             <CardTitle className="text-sm font-medium">Total P&L</CardTitle>
-            <TrendingUp className="h-4 w-4 text-profit" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-profit">{formatCurrency(0)}</div>
-            <p className="text-xs text-profit">
+            <div className="text-2xl font-bold">{formatCurrency(0)}</div>
+            <p className="text-xs text-muted-foreground">
               {formatPercentage(0)} overall
             </p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader>
             <CardTitle className="text-sm font-medium">Level</CardTitle>
-            <Zap className="h-4 w-4 text-accent" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-accent">{userProfile.level || 1}</div>
-            <p className="text-xs text-muted-foreground">{100 - ((userProfile.total_xp || 0) % 100)} XP to next level</p>
+            <div className="text-2xl font-bold">{userProfile.level || 1}</div>
+            <p className="text-xs text-muted-foreground">{levelProgress.required - levelProgress.current} XP to next level</p>
           </CardContent>
         </Card>
       </div>
+
+      {/* Welcome to Learning - Show for new users */}
+      {(userProfile?.level || 1) <= 3 && (
+        <WelcomeToLearning userLevel={userProfile?.level || 1} />
+      )}
 
       {/* Portfolio Chart */}
       <Card>
@@ -216,13 +209,7 @@ export default function Dashboard() {
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
-            <AreaChart data={portfolioHistory}>
-              <defs>
-                <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
-                </linearGradient>
-              </defs>
+            <LineChart data={portfolioHistory}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
               <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" />
               <YAxis stroke="hsl(var(--muted-foreground))" />
@@ -234,15 +221,14 @@ export default function Dashboard() {
                 }}
                 formatter={(value: number) => [formatCurrency(value), 'Portfolio Value']}
               />
-              <Area 
+              <Line 
                 type="monotone" 
                 dataKey="value" 
                 stroke="hsl(var(--primary))" 
                 strokeWidth={2}
-                fillOpacity={1} 
-                fill="url(#colorValue)" 
+                dot={false}
               />
-            </AreaChart>
+            </LineChart>
           </ResponsiveContainer>
         </CardContent>
       </Card>
@@ -254,7 +240,6 @@ export default function Dashboard() {
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
-            <Target className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <p className="text-muted-foreground">No positions yet. Start trading to see your portfolio!</p>
           </div>
         </CardContent>

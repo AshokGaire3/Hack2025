@@ -168,12 +168,32 @@ export function generateMockPrices(symbol: string, days: number = 30): Array<{ d
   return data;
 }
 
-// Level calculation
+// Progressive level calculation
+// Level 1: 500 XP, Level 2: 1000 XP, Level 3: 1500 XP, etc.
 export function calculateLevel(xp: number): number {
-  return Math.floor(xp / 100) + 1;
+  if (xp < 500) return 1;
+  return Math.floor(xp / 500) + 1;
 }
 
 export function getXpForNextLevel(currentXp: number): number {
   const currentLevel = calculateLevel(currentXp);
-  return currentLevel * 100;
+  return currentLevel * 500;
+}
+
+export function getXpRequiredForLevel(level: number): number {
+  return level * 500;
+}
+
+export function getCurrentLevelProgress(xp: number): { current: number, required: number, progress: number } {
+  const level = calculateLevel(xp);
+  const currentLevelXp = (level - 1) * 500;
+  const nextLevelXp = level * 500;
+  const progressInLevel = xp - currentLevelXp;
+  const requiredForLevel = nextLevelXp - currentLevelXp;
+  
+  return {
+    current: progressInLevel,
+    required: requiredForLevel,
+    progress: Math.round((progressInLevel / requiredForLevel) * 100)
+  };
 }

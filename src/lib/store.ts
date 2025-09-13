@@ -1,6 +1,6 @@
 // Local storage-based state management for the trading simulator
 
-import { User, Portfolio, Position } from './trading';
+import { User, Portfolio, Position, calculateLevel } from './trading';
 
 const STORAGE_KEYS = {
   USER: 'trading_sim_user',
@@ -39,7 +39,7 @@ export class TradingStore {
   static updateUserXP(xp: number): User {
     const user = this.getUser();
     user.xp += xp;
-    user.level = Math.floor(user.xp / 100) + 1;
+    user.level = calculateLevel(user.xp);
     this.saveUser(user);
     return user;
   }
@@ -77,7 +77,7 @@ export class TradingStore {
       // Award XP based on profit
       if (position.pnl > 0) {
         user.xp += Math.floor(position.pnl / 10); // 1 XP per $10 profit
-        user.level = Math.floor(user.xp / 100) + 1;
+        user.level = calculateLevel(user.xp);
       }
     }
     

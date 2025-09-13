@@ -46,6 +46,9 @@ export default function Trading() {
   // Chart State
   const [activeTab, setActiveTab] = useState('quote');
   const [payoffData, setPayoffData] = useState<any[]>([]);
+  
+  // Expiration Date Filter
+  const [selectedExpirations, setSelectedExpirations] = useState<string[]>([]);
 
   // Load market data on component mount and symbol change
   useEffect(() => {
@@ -211,6 +214,11 @@ export default function Trading() {
     }));
   };
 
+  const getAllExpirationDates = () => {
+    const expirations = [...new Set(optionChain.map(option => option.expiration))];
+    return expirations.sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+  };
+
   const getOptionsByExpiration = () => {
     const grouped = optionChain.reduce((acc, option) => {
       if (!acc[option.expiration]) {
@@ -224,8 +232,16 @@ export default function Trading() {
       return acc;
     }, {} as { [key: string]: { calls: OptionContract[], puts: OptionContract[] } });
 
-    // Sort by expiration date
-    return Object.entries(grouped).sort(([a], [b]) => new Date(a).getTime() - new Date(b).getTime());
+    // Sort by expiration date and filter by selected expirations
+    const sortedEntries = Object.entries(grouped).sort(([a], [b]) => new Date(a).getTime() - new Date(b).getTime());
+    
+    // If no specific expirations are selected, show all
+    if (selectedExpirations.length === 0) {
+      return sortedEntries;
+    }
+    
+    // Filter to only show selected expirations
+    return sortedEntries.filter(([expiration]) => selectedExpirations.includes(expiration));
   };
 
   const getTotalPortfolioValue = () => {
@@ -550,6 +566,34 @@ export default function Trading() {
           <Card>
             <CardHeader>
               <CardTitle>Option Chain</CardTitle>
+              <div className="mt-4">
+                <Label>Filter by Expiration Date</Label>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  <Button
+                    variant={selectedExpirations.length === 0 ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedExpirations([])}
+                  >
+                    All Dates
+                  </Button>
+                  {getAllExpirationDates().map((expiration) => (
+                    <Button
+                      key={expiration}
+                      variant={selectedExpirations.includes(expiration) ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => {
+                        if (selectedExpirations.includes(expiration)) {
+                          setSelectedExpirations(prev => prev.filter(exp => exp !== expiration));
+                        } else {
+                          setSelectedExpirations(prev => [...prev, expiration]);
+                        }
+                      }}
+                    >
+                      {new Date(expiration).toLocaleDateString()} ({getDaysToExpiry(expiration)}d)
+                    </Button>
+                  ))}
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-4 max-h-96 overflow-y-auto">

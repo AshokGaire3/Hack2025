@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
+import { calculateLevel } from '@/lib/trading';
 
 export type UserProfile = Tables<'users_profile'>;
 export type Quiz = Tables<'quizzes'>;
@@ -79,7 +80,7 @@ export class SupabaseService {
     if (!profile) throw new Error('User profile not found');
 
     const newTotalXP = (profile.total_xp || 0) + xpGained;
-    const newLevel = Math.floor(newTotalXP / 100) + 1;
+    const newLevel = calculateLevel(newTotalXP);
 
     return this.updateUserProfile(userId, {
       total_xp: newTotalXP,
