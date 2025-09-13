@@ -3,6 +3,7 @@ import { Link, useLocation, Navigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { ThemeToggle } from '@/components/theme-toggle';
 import { useAuth } from '@/hooks/useAuth';
 import { 
   TrendingUp, 
@@ -101,12 +102,17 @@ export default function Layout({ children }: LayoutProps) {
                 );
               })}
               
+              {/* Theme Toggle */}
+              <div className="ml-4">
+                <ThemeToggle />
+              </div>
+              
               {/* Sign Out Button */}
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleSignOut}
-                className="ml-4"
+                className="ml-2"
               >
                 <LogOut className="h-4 w-4" />
               </Button>
@@ -153,6 +159,23 @@ export default function Layout({ children }: LayoutProps) {
                   </Link>
                 );
               })}
+              
+              {/* Mobile Theme Toggle and Sign Out */}
+              <div className="border-t border-border pt-2 mt-2 flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <ThemeToggle />
+                  <span className="text-sm text-muted-foreground">Theme</span>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleSignOut}
+                  className="text-muted-foreground"
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sign Out
+                </Button>
+              </div>
             </nav>
           </div>
         )}

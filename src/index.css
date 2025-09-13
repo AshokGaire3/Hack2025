@@ -6,6 +6,71 @@
 
 @layer base {
   :root {
+    /* Trading Theme - Light Professional */
+    --background: 0 0% 100%;
+    --foreground: 217 33% 6%;
+
+    /* Trading Cards & Surfaces */
+    --card: 0 0% 100%;
+    --card-foreground: 217 33% 6%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 217 33% 6%;
+
+    /* Trading Primary - Electric Blue */
+    --primary: 212 100% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Trading Secondary - Light Gray */
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 217 33% 6%;
+
+    /* Muted Areas */
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    /* Accent - Gold for Premium */
+    --accent: 43 100% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Trading Colors */
+    --profit: 142 72% 40%;
+    --profit-foreground: 0 0% 100%;
+    
+    --loss: 0 72% 45%;
+    --loss-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Borders & Inputs */
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 212 100% 50%;
+
+    --radius: 0.75rem;
+
+    /* Gradients */
+    --gradient-trading: linear-gradient(135deg, hsl(212 100% 60%), hsl(142 72% 50%));
+    --gradient-profit: linear-gradient(135deg, hsl(142 72% 50%), hsl(142 72% 40%));
+    --gradient-loss: linear-gradient(135deg, hsl(0 72% 55%), hsl(0 72% 45%));
+    --gradient-premium: linear-gradient(135deg, hsl(43 100% 65%), hsl(43 100% 55%));
+
+    /* Shadows */
+    --shadow-trading: 0 10px 30px -10px hsl(212 100% 60% / 0.3);
+    --shadow-glow: 0 0 40px hsl(212 100% 60% / 0.2);
+    --shadow-profit: 0 0 20px hsl(142 72% 50% / 0.3);
+    --shadow-loss: 0 0 20px hsl(0 72% 55% / 0.3);
+
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  .dark {
     /* Trading Theme - Dark Professional */
     --background: 217 33% 6%;
     --foreground: 213 31% 91%;
@@ -21,7 +86,7 @@
     --primary: 212 100% 60%;
     --primary-foreground: 217 33% 6%;
 
-    /* Trading Secondary - Slate */
+    /* Trading Secondary - Dark Slate */
     --secondary: 217 33% 12%;
     --secondary-foreground: 213 31% 91%;
 
@@ -47,47 +112,6 @@
     --destructive-foreground: 213 31% 91%;
 
     /* Borders & Inputs */
-    --border: 217 33% 15%;
-    --input: 217 33% 12%;
-    --ring: 212 100% 60%;
-
-    --radius: 0.75rem;
-
-    /* Gradients */
-    --gradient-trading: linear-gradient(135deg, hsl(212 100% 60%), hsl(142 72% 50%));
-    --gradient-profit: linear-gradient(135deg, hsl(142 72% 50%), hsl(142 72% 40%));
-    --gradient-loss: linear-gradient(135deg, hsl(0 72% 55%), hsl(0 72% 45%));
-    --gradient-premium: linear-gradient(135deg, hsl(43 100% 65%), hsl(43 100% 55%));
-
-    /* Shadows */
-    --shadow-trading: 0 10px 30px -10px hsl(212 100% 60% / 0.3);
-    --shadow-glow: 0 0 40px hsl(212 100% 60% / 0.2);
-    --shadow-profit: 0 0 20px hsl(142 72% 50% / 0.3);
-    --shadow-loss: 0 0 20px hsl(0 72% 55% / 0.3);
-
-    /* Animations */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  }
-
-  .dark {
-    /* Keep same values for consistent dark theme */
-    --background: 217 33% 6%;
-    --foreground: 213 31% 91%;
-    --card: 217 33% 8%;
-    --card-foreground: 213 31% 91%;
-    --popover: 217 33% 8%;
-    --popover-foreground: 213 31% 91%;
-    --primary: 212 100% 60%;
-    --primary-foreground: 217 33% 6%;
-    --secondary: 217 33% 12%;
-    --secondary-foreground: 213 31% 91%;
-    --muted: 217 33% 10%;
-    --muted-foreground: 213 20% 70%;
-    --accent: 43 100% 65%;
-    --accent-foreground: 217 33% 6%;
-    --destructive: 0 72% 55%;
-    --destructive-foreground: 213 31% 91%;
     --border: 217 33% 15%;
     --input: 217 33% 12%;
     --ring: 212 100% 60%;
