@@ -99,7 +99,7 @@ export default function AuthPage() {
             </div>
             <div>
               <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                TradeSim Pro
+                OPT Lab
               </h1>
             </div>
           </div>

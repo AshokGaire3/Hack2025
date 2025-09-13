@@ -70,7 +70,7 @@ export default function Layout({ children }: LayoutProps) {
               </div>
               <div>
                 <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                  TradeSim Pro
+                  OPT Lab
                 </h1>
                 <p className="text-xs text-muted-foreground">Options Trading Simulator</p>
               </div>
@@ -170,7 +170,7 @@ export default function Layout({ children }: LayoutProps) {
                 <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
                   <Zap className="h-5 w-5 text-white" />
                 </div>
-                <h3 className="font-bold text-foreground">TradeSim Pro</h3>
+                <h3 className="font-bold text-foreground">OPT Lab</h3>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Master options trading with our advanced simulator. Practice with real-time pricing, 
@@ -202,7 +202,7 @@ export default function Layout({ children }: LayoutProps) {
           
           <div className="border-t border-border mt-8 pt-8 text-center">
             <p className="text-sm text-muted-foreground">
-              © 2024 TradeSim Pro. Built with React, TypeScript, and Tailwind CSS.
+              © 2024 OPT Lab. Built with React, TypeScript, and Tailwind CSS.
             </p>
             <p className="text-xs text-muted-foreground mt-2">
               Educational purposes only. Not financial advice.

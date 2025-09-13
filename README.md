@@ -1,4 +1,4 @@
-# TradeSim Pro - Options Trading Simulator
+# OPT Lab - Options Trading Simulator
 
 A comprehensive options trading simulator built with modern web technologies. Master options trading with real-time Black-Scholes pricing, portfolio tracking, and interactive learning features.
 
