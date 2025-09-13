@@ -407,6 +407,26 @@ function LessonViewer({ lesson, onBack, onComplete, isCompleted }: LessonViewerP
       {/* Lesson Content */}
       <Card>
         <CardContent className="p-6">
+          {/* Top Images */}
+          {lesson.images?.filter(img => img.position === 'top').map((image, index) => (
+            <div key={`top-${index}`} className="mb-6">
+              <img 
+                src={image.src} 
+                alt={image.alt}
+                className="w-full max-w-2xl mx-auto rounded-lg shadow-sm"
+                onError={(e) => {
+                  // Hide image if it fails to load
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+              {image.caption && (
+                <p className="text-xs text-muted-foreground text-center mt-2 italic">
+                  {image.caption}
+                </p>
+              )}
+            </div>
+          ))}
+          
           <div className="space-y-5 text-slate-700 dark:text-slate-300 leading-relaxed text-sm">
             {lesson.content.split('\n\n').map((paragraph, index) => {
               // Skip empty paragraphs
@@ -506,6 +526,44 @@ function LessonViewer({ lesson, onBack, onComplete, isCompleted }: LessonViewerP
               );
             })}
           </div>
+          
+          {/* Middle Images */}
+          {lesson.images?.filter(img => img.position === 'middle').map((image, index) => (
+            <div key={`middle-${index}`} className="my-6">
+              <img 
+                src={image.src} 
+                alt={image.alt}
+                className="w-full max-w-2xl mx-auto rounded-lg shadow-sm"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+              {image.caption && (
+                <p className="text-xs text-muted-foreground text-center mt-2 italic">
+                  {image.caption}
+                </p>
+              )}
+            </div>
+          ))}
+          
+          {/* Bottom Images */}
+          {lesson.images?.filter(img => img.position === 'bottom' || !img.position).map((image, index) => (
+            <div key={`bottom-${index}`} className="mt-6">
+              <img 
+                src={image.src} 
+                alt={image.alt}
+                className="w-full max-w-2xl mx-auto rounded-lg shadow-sm"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+              {image.caption && (
+                <p className="text-xs text-muted-foreground text-center mt-2 italic">
+                  {image.caption}
+                </p>
+              )}
+            </div>
+          ))}
         </CardContent>
       </Card>
 

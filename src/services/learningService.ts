@@ -1,5 +1,12 @@
 // Learning platform service for structured financial education
 
+export interface LessonImage {
+  src: string; // path to image
+  alt: string; // alt text for accessibility
+  caption?: string; // optional caption
+  position?: 'top' | 'middle' | 'bottom' | 'inline'; // where to place the image
+}
+
 export interface Lesson {
   id: string;
   title: string;
@@ -12,6 +19,7 @@ export interface Lesson {
   category: string;
   order: number;
   videoUrl?: string;
+  images?: LessonImage[]; // array of images for the lesson
   quiz?: {
     questions: QuizQuestion[];
   };
@@ -50,6 +58,20 @@ const LEARNING_LESSONS: Lesson[] = [
     id: 'stocks-101',
     title: 'What is a Stock?',
     description: 'Learn the fundamental concept of stocks and how they represent ownership in companies.',
+    images: [
+      {
+        src: '/images/learning/stock-ownership-diagram.png',
+        alt: 'Diagram showing how stock ownership works - company divided into shares',
+        caption: 'Visual representation of how stocks represent ownership in a company',
+        position: 'top'
+      },
+      {
+        src: '/images/learning/market-cap-example.png',
+        alt: 'Market capitalization calculation example with Apple stock',
+        caption: 'Example: How market capitalization is calculated using Apple (AAPL) stock',
+        position: 'bottom'
+      }
+    ],
     content: `What is a Stock?
 
 A stock represents a share of ownership in a company. When you buy stock, you become a shareholder and own a piece of that business.
@@ -138,6 +160,20 @@ If Apple (AAPL) trades at $150 per share and has 16 billion shares outstanding:
     id: 'stock-markets',
     title: 'How Stock Markets Work',
     description: 'Understand how stock exchanges operate and how trades are executed.',
+    images: [
+      {
+        src: '/images/learning/bid-ask-spread.png',
+        alt: 'Illustration of bid-ask spread in stock trading',
+        caption: 'How bid-ask spreads work in stock market trading',
+        position: 'middle'
+      },
+      {
+        src: '/images/learning/stock-price-chart.png',
+        alt: 'Sample stock price chart showing price movements over time',
+        caption: 'Example of how stock prices change throughout a trading day',
+        position: 'bottom'
+      }
+    ],
     content: `How Stock Markets Work
 
 Stock markets are organized exchanges where buyers and sellers trade shares of publicly-traded companies.
@@ -200,6 +236,20 @@ You want to buy 100 shares of Tesla (TSLA):
     id: 'options-101',
     title: 'Options Basics (Foundation)',
     description: 'Learn the fundamentals of options trading with simple, clear explanations.',
+    images: [
+      {
+        src: '/images/learning/call-option-diagram.png',
+        alt: 'Call option profit and loss diagram',
+        caption: 'Call option P&L diagram showing profit potential and maximum loss',
+        position: 'middle'
+      },
+      {
+        src: '/images/learning/put-option-diagram.png',
+        alt: 'Put option profit and loss diagram',
+        caption: 'Put option P&L diagram showing how puts profit from stock price declines',
+        position: 'bottom'
+      }
+    ],
     content: `What is an Option?
 
 A contract giving the right (not obligation) to buy (Call) or sell (Put) an asset at a fixed price before expiration.
@@ -370,6 +420,20 @@ Options are "wasting assets" - they lose value over time. The closer to expirati
     id: 'options-greeks',
     title: 'The Greeks: Risk Measures',
     description: 'Master Delta, Gamma, Theta, Vega, and Rho to understand option risk.',
+    images: [
+      {
+        src: '/images/learning/options-greeks-chart.png',
+        alt: 'Visual representation of the Options Greeks - Delta, Gamma, Theta, Vega',
+        caption: 'The Options Greeks: How each Greek measures different aspects of option risk',
+        position: 'top'
+      },
+      {
+        src: '/images/learning/volatility-chart.png',
+        alt: 'Chart showing volatility impact on option prices over time',
+        caption: 'How volatility affects option pricing - higher volatility increases option premiums',
+        position: 'bottom'
+      }
+    ],
     content: `The Greeks: Option Risk Measures
 
 The Greeks are mathematical measures that help you understand how option prices change with different factors.

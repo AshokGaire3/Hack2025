@@ -350,42 +350,52 @@ export default function QuizPage() {
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Question */}
-          <div className="p-6 bg-secondary/50 rounded-lg">
-            <p className="text-lg font-medium leading-relaxed">{currentQuiz.question}</p>
+          <div className="p-6 bg-gradient-to-r from-primary/5 to-accent/5 border border-primary/10 rounded-lg shadow-sm">
+            <p className="text-lg font-medium leading-relaxed text-foreground">{currentQuiz.question}</p>
           </div>
 
           {/* Answer Choices */}
           <div className="space-y-3">
             {(currentQuiz.choices as string[]).map((choice, index) => {
-              let buttonClass = "w-full p-4 text-left border-2 transition-all duration-200 hover:border-primary/50";
+              let buttonClass = "w-full p-4 text-left border-2 transition-all duration-200 rounded-lg";
               
               if (showResult) {
                 if (index === currentQuiz.correct_choice) {
-                  buttonClass += " border-profit bg-profit/10 text-profit";
+                  buttonClass += " border-profit bg-profit/10 text-profit shadow-md";
                 } else if (index === selectedAnswer && !isCorrect) {
-                  buttonClass += " border-loss bg-loss/10 text-loss";
+                  buttonClass += " border-loss bg-loss/10 text-loss shadow-md";
                 } else {
                   buttonClass += " border-muted bg-muted/20 text-muted-foreground";
                 }
               } else if (selectedAnswer === index) {
-                buttonClass += " border-primary bg-primary/10 text-primary";
+                buttonClass += " border-primary bg-primary/10 text-primary shadow-md scale-[1.02]";
               } else {
-                buttonClass += " border-border hover:bg-secondary/50";
+                buttonClass += " border-border bg-background hover:border-primary hover:bg-primary/5 hover:shadow-lg hover:scale-[1.01] cursor-pointer";
               }
 
               return (
                 <Button
                   key={index}
                   variant="outline"
-                  className={buttonClass}
+                  className={`${buttonClass} group`}
                   onClick={() => handleAnswerSelect(index)}
                   disabled={showResult}
                 >
                   <div className="flex items-center">
-                    <span className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-sm font-medium mr-3">
+                    <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium mr-3 transition-colors duration-200 ${
+                      showResult 
+                        ? index === currentQuiz.correct_choice 
+                          ? 'bg-profit text-white' 
+                          : index === selectedAnswer && !isCorrect
+                          ? 'bg-loss text-white'
+                          : 'bg-muted text-muted-foreground'
+                        : selectedAnswer === index 
+                        ? 'bg-primary text-white' 
+                        : 'bg-muted group-hover:bg-primary/20 group-hover:text-primary'
+                    }`}>
                       {String.fromCharCode(65 + index)}
                     </span>
-                    <span>{choice}</span>
+                    <span className="group-hover:text-primary transition-colors duration-200">{choice}</span>
                     {showResult && index === currentQuiz.correct_choice && (
                       <CheckCircle className="h-5 w-5 ml-auto text-profit" />
                     )}
@@ -430,7 +440,7 @@ export default function QuizPage() {
               <Button 
                 onClick={submitAnswer} 
                 disabled={selectedAnswer === null || loading}
-                className="min-w-[120px]"
+                className="min-w-[120px] bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 shadow-md hover:shadow-lg transition-all duration-200"
               >
                 {loading ? (
                   <div className="flex items-center">
@@ -442,7 +452,7 @@ export default function QuizPage() {
                 )}
               </Button>
             ) : (
-              <Button onClick={loadNextQuiz} className="bg-gradient-to-r from-primary to-accent">
+              <Button onClick={loadNextQuiz} className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 shadow-md hover:shadow-lg transition-all duration-200">
                 Next Question
               </Button>
             )}
