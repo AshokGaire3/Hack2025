@@ -21,6 +21,20 @@ export class SupabaseService {
     return data;
   }
 
+  static async createUserProfile(profile: Partial<UserProfile> & { id: string }) {
+    const { data, error } = await supabase
+      .from('users_profile')
+      .insert(profile)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error creating user profile:', error);
+      throw error;
+    }
+    return data;
+  }
+
   static async updateUserProfile(userId: string, updates: Partial<UserProfile>) {
     const { data, error } = await supabase
       .from('users_profile')
@@ -42,7 +56,7 @@ export class SupabaseService {
     if (!profile) throw new Error('User profile not found');
 
     const newTotalXP = (profile.total_xp || 0) + xpGained;
-    const newLevel = Math.floor(newTotalXP / 1000) + 1;
+    const newLevel = Math.floor(newTotalXP / 100) + 1;
 
     return this.updateUserProfile(userId, {
       total_xp: newTotalXP,

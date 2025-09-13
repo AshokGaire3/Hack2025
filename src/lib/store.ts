@@ -39,7 +39,7 @@ export class TradingStore {
   static updateUserXP(xp: number): User {
     const user = this.getUser();
     user.xp += xp;
-    user.level = Math.floor(user.xp / 1000) + 1;
+    user.level = Math.floor(user.xp / 100) + 1;
     this.saveUser(user);
     return user;
   }
@@ -77,7 +77,7 @@ export class TradingStore {
       // Award XP based on profit
       if (position.pnl > 0) {
         user.xp += Math.floor(position.pnl / 10); // 1 XP per $10 profit
-        user.level = Math.floor(user.xp / 1000) + 1;
+        user.level = Math.floor(user.xp / 100) + 1;
       }
     }
     
@@ -110,15 +110,15 @@ export class TradingStore {
     // Add some mock competitors if leaderboard is too small
     if (leaderboard.length < 10) {
       const mockTraders = [
-        { name: "WallStreetWolf", xp: 15000, level: 16, balance: 25000 },
-        { name: "OptionGuru", xp: 12000, level: 13, balance: 22000 },
-        { name: "ThetaGang", xp: 10000, level: 11, balance: 18000 },
-        { name: "VolTrader", xp: 8500, level: 9, balance: 16000 },
-        { name: "DerivativeDealer", xp: 7000, level: 8, balance: 14000 },
-        { name: "StrikeKing", xp: 6000, level: 7, balance: 13000 },
-        { name: "PremiumHunter", xp: 5000, level: 6, balance: 12000 },
-        { name: "CallPutMaster", xp: 4000, level: 5, balance: 11000 },
-        { name: "GreekGoddess", xp: 3000, level: 4, balance: 10500 }
+        { name: "WallStreetWolf", xp: 1500, level: 16, balance: 25000 },
+        { name: "OptionGuru", xp: 1200, level: 13, balance: 22000 },
+        { name: "ThetaGang", xp: 1000, level: 11, balance: 18000 },
+        { name: "VolTrader", xp: 850, level: 9, balance: 16000 },
+        { name: "DerivativeDealer", xp: 700, level: 8, balance: 14000 },
+        { name: "StrikeKing", xp: 600, level: 7, balance: 13000 },
+        { name: "PremiumHunter", xp: 500, level: 6, balance: 12000 },
+        { name: "CallPutMaster", xp: 400, level: 5, balance: 11000 },
+        { name: "GreekGoddess", xp: 300, level: 4, balance: 10500 }
       ];
       
       mockTraders.forEach(trader => {

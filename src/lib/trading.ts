@@ -170,10 +170,10 @@ export function generateMockPrices(symbol: string, days: number = 30): Array<{ d
 
 // Level calculation
 export function calculateLevel(xp: number): number {
-  return Math.floor(xp / 1000) + 1;
+  return Math.floor(xp / 100) + 1;
 }
 
 export function getXpForNextLevel(currentXp: number): number {
   const currentLevel = calculateLevel(currentXp);
-  return currentLevel * 1000;
+  return currentLevel * 100;
 }

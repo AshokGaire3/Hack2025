@@ -10,6 +10,8 @@ import { TrendingUp, TrendingDown, DollarSign, Target, Award, Zap } from 'lucide
 export default function Dashboard() {
   const { user } = useAuth();
   const [userProfile, setUserProfile] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [portfolioHistory] = useState(() => {
     // Generate mock portfolio history
     const data = [];
@@ -36,22 +38,85 @@ export default function Dashboard() {
   const loadUserProfile = async () => {
     if (!user) return;
     try {
-      const profile = await SupabaseService.getUserProfile(user.id);
+      setLoading(true);
+      setError(null);
+      
+      // Try to load from Supabase first
+      let profile = await SupabaseService.getUserProfile(user.id);
+      
+      // If profile doesn't exist, try to create it
+      if (!profile) {
+        console.log('Creating new user profile...');
+        try {
+          await SupabaseService.createUserProfile({
+            id: user.id,
+            username: user.email?.split('@')[0] || 'User',
+            balance: 10000,
+            total_xp: 0,
+            level: 1
+          });
+          profile = await SupabaseService.getUserProfile(user.id);
+        } catch (createError) {
+          console.error('Error creating profile:', createError);
+          // Fallback to local profile
+          profile = {
+            id: user.id,
+            username: user.email?.split('@')[0] || 'User',
+            balance: 10000,
+            total_xp: 0,
+            level: 1,
+            created_at: new Date().toISOString()
+          };
+        }
+      }
+      
       setUserProfile(profile);
     } catch (error) {
       console.error('Error loading user profile:', error);
+      // Fallback to local profile if database fails
+      const fallbackProfile = {
+        id: user.id,
+        username: user.email?.split('@')[0] || 'User',
+        balance: 10000,
+        total_xp: 0,
+        level: 1,
+        created_at: new Date().toISOString()
+      };
+      setUserProfile(fallbackProfile);
+      console.log('Using fallback profile due to database error');
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (!userProfile) {
+  if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
+      <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <p className="text-muted-foreground">Loading your dashboard...</p>
       </div>
     );
   }
 
-  const xpProgress = ((userProfile.total_xp || 0) % 1000) / 1000 * 100;
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
+        <p className="text-destructive">{error}</p>
+        <Button onClick={() => loadUserProfile()}>Try Again</Button>
+      </div>
+    );
+  }
+
+  if (!userProfile) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
+        <p className="text-muted-foreground">Unable to load profile data.</p>
+        <Button onClick={() => loadUserProfile()}>Retry</Button>
+      </div>
+    );
+  }
+
+  const xpProgress = ((userProfile.total_xp || 0) % 100) / 100 * 100;
 
   return (
     <div className="space-y-6">
@@ -81,7 +146,7 @@ export default function Dashboard() {
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium">Progress to Level {(userProfile.level || 1) + 1}</span>
-            <span className="text-sm text-muted-foreground">{(userProfile.total_xp || 0) % 1000} / 1000 XP</span>
+            <span className="text-sm text-muted-foreground">{(userProfile.total_xp || 0) % 100} / 100 XP</span>
           </div>
           <div className="w-full bg-secondary rounded-full h-2">
             <div 
@@ -139,7 +204,7 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-accent">{userProfile.level || 1}</div>
-            <p className="text-xs text-muted-foreground">{1000 - ((userProfile.total_xp || 0) % 1000)} XP to next level</p>
+            <p className="text-xs text-muted-foreground">{100 - ((userProfile.total_xp || 0) % 100)} XP to next level</p>
           </CardContent>
         </Card>
       </div>
