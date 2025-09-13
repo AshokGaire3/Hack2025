@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, Navigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { useAuth } from '@/hooks/useAuth';
 import { 
   TrendingUp, 
   Target, 
@@ -12,7 +13,9 @@ import {
   Menu,
   X,
   Activity,
-  Zap
+  Zap,
+  LogOut,
+  Loader2
 } from 'lucide-react';
 
 const navigation = [
@@ -30,6 +33,29 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { user, loading, signOut } = useAuth();
+
+  // Show loading spinner while checking auth
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  // Redirect to auth if not logged in
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -51,7 +77,7 @@ export default function Layout({ children }: LayoutProps) {
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex space-x-1">
+            <nav className="hidden md:flex items-center space-x-1">
               {navigation.map((item) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.href;
@@ -72,6 +98,16 @@ export default function Layout({ children }: LayoutProps) {
                   </Link>
                 );
               })}
+              
+              {/* Sign Out Button */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleSignOut}
+                className="ml-4"
+              >
+                <LogOut className="h-4 w-4" />
+              </Button>
             </nav>
 
             {/* Mobile menu button */}

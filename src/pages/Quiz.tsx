@@ -2,28 +2,60 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { QuizStore, TradingStore, Quiz } from '@/lib/store';
-import { User } from '@/lib/trading';
+import { useAuth } from '@/hooks/useAuth';
+import { SupabaseService, type Quiz } from '@/services/supabaseService';
 import { Brain, CheckCircle, XCircle, Zap, Trophy, BookOpen } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 export default function QuizPage() {
-  const [user, setUser] = useState<User>(TradingStore.getUser());
+  const { user } = useAuth();
+  const [userProfile, setUserProfile] = useState<any>(null);
+  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [completedAttempts, setCompletedAttempts] = useState<any[]>([]);
   const [currentQuiz, setCurrentQuiz] = useState<Quiz | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [completedQuizzes, setCompletedQuizzes] = useState<string[]>([]);
 
   useEffect(() => {
-    loadNextQuiz();
-    setCompletedQuizzes(QuizStore.getCompletedQuizzes());
-  }, []);
+    if (user) {
+      loadUserData();
+      loadQuizzes();
+    }
+  }, [user]);
+
+  const loadUserData = async () => {
+    if (!user) return;
+    try {
+      const profile = await SupabaseService.getUserProfile(user.id);
+      setUserProfile(profile);
+      
+      const attempts = await SupabaseService.getQuizAttempts(user.id);
+      setCompletedAttempts(attempts);
+    } catch (error) {
+      console.error('Error loading user data:', error);
+    }
+  };
+
+  const loadQuizzes = async () => {
+    try {
+      const quizData = await SupabaseService.getQuizzes();
+      setQuizzes(quizData);
+      
+      // Find next available quiz
+      const completedQuizIds = completedAttempts.map(attempt => attempt.quiz_id);
+      const nextQuiz = quizData.find(quiz => !completedQuizIds.includes(quiz.id.toString()));
+      setCurrentQuiz(nextQuiz || null);
+    } catch (error) {
+      console.error('Error loading quizzes:', error);
+    }
+  };
 
   const loadNextQuiz = () => {
-    const nextQuiz = QuizStore.getNextQuiz();
-    setCurrentQuiz(nextQuiz);
+    const completedQuizIds = completedAttempts.map(attempt => attempt.quiz_id);
+    const nextQuiz = quizzes.find(quiz => !completedQuizIds.includes(quiz.id.toString()));
+    setCurrentQuiz(nextQuiz || null);
     setSelectedAnswer(null);
     setShowResult(false);
     setIsCorrect(false);
@@ -35,35 +67,60 @@ export default function QuizPage() {
   };
 
   const submitAnswer = async () => {
-    if (selectedAnswer === null || !currentQuiz) return;
+    if (selectedAnswer === null || !currentQuiz || !user) return;
 
     setLoading(true);
     
-    // Simulate processing time
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const correct = selectedAnswer === currentQuiz.correctChoice;
-    setIsCorrect(correct);
-    setShowResult(true);
-    setLoading(false);
+    try {
+      // Simulate processing time
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const correct = selectedAnswer === currentQuiz.correct_choice;
+      setIsCorrect(correct);
+      setShowResult(true);
 
-    if (correct) {
-      // Award XP and mark quiz as completed
-      const updatedUser = TradingStore.updateUserXP(currentQuiz.xpReward);
-      setUser(updatedUser);
-      QuizStore.markQuizCompleted(currentQuiz.id);
-      setCompletedQuizzes(QuizStore.getCompletedQuizzes());
+      // Submit quiz attempt to database
+      await SupabaseService.submitQuizAttempt(
+        user.id,
+        currentQuiz.id.toString(),
+        { selectedAnswer },
+        correct ? 1 : 0,
+        1,
+        correct
+      );
 
+      if (correct) {
+        // Award XP
+        await SupabaseService.updateUserXP(user.id, currentQuiz.xp_reward);
+        
+        // Refresh user data
+        await loadUserData();
+
+        toast({
+          title: "Correct! 🎉",
+          description: `You earned ${currentQuiz.xp_reward} XP!`,
+        });
+      } else {
+        toast({
+          title: "Incorrect",
+          description: "Study the explanation and try the next question!",
+          variant: "destructive"
+        });
+      }
+
+      // Update completed attempts
+      const attempts = await SupabaseService.getQuizAttempts(user.id);
+      setCompletedAttempts(attempts);
+      
+    } catch (error) {
+      console.error('Error submitting quiz answer:', error);
       toast({
-        title: "Correct! 🎉",
-        description: `You earned ${currentQuiz.xpReward} XP!`,
-      });
-    } else {
-      toast({
-        title: "Incorrect",
-        description: "Study the explanation and try the next question!",
+        title: "Error",
+        description: "Failed to submit answer. Please try again.",
         variant: "destructive"
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -97,7 +154,7 @@ export default function QuizPage() {
         </div>
         <div className="text-center">
           <p className="text-sm text-muted-foreground">Quizzes Completed</p>
-          <p className="text-3xl font-bold text-primary">{completedQuizzes.length}</p>
+          <p className="text-3xl font-bold text-primary">{completedAttempts.length}</p>
         </div>
       </div>
     );
@@ -115,7 +172,7 @@ export default function QuizPage() {
         </div>
         <div className="text-right">
           <p className="text-sm text-muted-foreground">Current XP</p>
-          <p className="text-2xl font-bold text-accent">{user.xp.toLocaleString()}</p>
+          <p className="text-2xl font-bold text-accent">{userProfile?.total_xp || 0}</p>
         </div>
       </div>
 
@@ -128,16 +185,16 @@ export default function QuizPage() {
               <div>
                 <p className="font-medium">Progress</p>
                 <p className="text-sm text-muted-foreground">
-                  {completedQuizzes.length} of 5 quizzes completed
+                  {completedAttempts.length} of {quizzes.length} quizzes completed
                 </p>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-sm text-muted-foreground">Level {user.level}</p>
-              <p className="text-lg font-bold text-accent">{user.xp % 1000} / 1000 XP</p>
+              <p className="text-sm text-muted-foreground">Level {userProfile?.level || 1}</p>
+              <p className="text-lg font-bold text-accent">{(userProfile?.total_xp || 0) % 1000} / 1000 XP</p>
             </div>
           </div>
-          <Progress value={(completedQuizzes.length / 5) * 100} className="h-2" />
+          <Progress value={quizzes.length > 0 ? (completedAttempts.length / quizzes.length) * 100 : 0} className="h-2" />
         </CardContent>
       </Card>
 
@@ -147,7 +204,7 @@ export default function QuizPage() {
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center">
               <BookOpen className="h-5 w-5 mr-2" />
-              Question {completedQuizzes.length + 1}
+              Question {completedAttempts.length + 1}
             </CardTitle>
             <div className="flex items-center space-x-2">
               <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getDifficultyBadge(currentQuiz.difficulty)}`}>
@@ -155,7 +212,7 @@ export default function QuizPage() {
               </span>
               <div className="flex items-center text-accent">
                 <Zap className="h-4 w-4 mr-1" />
-                <span className="font-medium">{currentQuiz.xpReward} XP</span>
+                <span className="font-medium">{currentQuiz.xp_reward} XP</span>
               </div>
             </div>
           </div>
@@ -168,11 +225,11 @@ export default function QuizPage() {
 
           {/* Answer Choices */}
           <div className="space-y-3">
-            {currentQuiz.choices.map((choice, index) => {
+            {(currentQuiz.choices as string[]).map((choice, index) => {
               let buttonClass = "w-full p-4 text-left border-2 transition-all duration-200 hover:border-primary/50";
               
               if (showResult) {
-                if (index === currentQuiz.correctChoice) {
+                if (index === currentQuiz.correct_choice) {
                   buttonClass += " border-profit bg-profit/10 text-profit";
                 } else if (index === selectedAnswer && !isCorrect) {
                   buttonClass += " border-loss bg-loss/10 text-loss";
@@ -198,7 +255,7 @@ export default function QuizPage() {
                       {String.fromCharCode(65 + index)}
                     </span>
                     <span>{choice}</span>
-                    {showResult && index === currentQuiz.correctChoice && (
+                    {showResult && index === currentQuiz.correct_choice && (
                       <CheckCircle className="h-5 w-5 ml-auto text-profit" />
                     )}
                     {showResult && index === selectedAnswer && !isCorrect && (
@@ -223,7 +280,10 @@ export default function QuizPage() {
                   <h4 className={`font-medium mb-2 ${isCorrect ? 'text-profit' : 'text-loss'}`}>
                     {isCorrect ? 'Correct!' : 'Incorrect'}
                   </h4>
-                  <p className="text-muted-foreground leading-relaxed">{currentQuiz.explanation}</p>
+                  <p className="text-muted-foreground leading-relaxed">
+                    {/* Note: Add explanation field to quiz table if needed */}
+                    {isCorrect ? 'Great job! You got it right.' : 'Not quite right, but keep learning!'}
+                  </p>
                 </div>
               </div>
             </div>

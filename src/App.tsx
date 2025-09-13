@@ -9,6 +9,7 @@ import Trading from "./pages/Trading";
 import Portfolio from "./pages/Portfolio";
 import Quiz from "./pages/Quiz";
 import Leaderboard from "./pages/Leaderboard";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -19,16 +20,18 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/trading" element={<Trading />} />
-            <Route path="/portfolio" element={<Portfolio />} />
-            <Route path="/quiz" element={<Quiz />} />
-            <Route path="/leaderboard" element={<Leaderboard />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Layout>
+        <Routes>
+          {/* Auth route - no layout wrapper */}
+          <Route path="/auth" element={<Auth />} />
+          
+          {/* Protected routes - wrapped with layout */}
+          <Route path="/" element={<Layout><Dashboard /></Layout>} />
+          <Route path="/trading" element={<Layout><Trading /></Layout>} />
+          <Route path="/portfolio" element={<Layout><Portfolio /></Layout>} />
+          <Route path="/quiz" element={<Layout><Quiz /></Layout>} />
+          <Route path="/leaderboard" element={<Layout><Leaderboard /></Layout>} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

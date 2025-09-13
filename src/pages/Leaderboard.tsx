@@ -1,20 +1,30 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { TradingStore } from '@/lib/store';
+import { useAuth } from '@/hooks/useAuth';
+import { SupabaseService } from '@/services/supabaseService';
 import { formatCurrency } from '@/lib/trading';
 import { Trophy, Medal, Award, Crown, TrendingUp, Star } from 'lucide-react';
 
 export default function Leaderboard() {
-  const [leaderboard, setLeaderboard] = useState(TradingStore.getLeaderboard());
-  const [currentUser] = useState(TradingStore.getUser());
+  const { user } = useAuth();
+  const [leaderboard, setLeaderboard] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setLeaderboard(TradingStore.getLeaderboard());
-    }, 10000);
-    return () => clearInterval(interval);
+    loadLeaderboard();
   }, []);
+
+  const loadLeaderboard = async () => {
+    try {
+      const data = await SupabaseService.getLeaderboard();
+      setLeaderboard(data);
+    } catch (error) {
+      console.error('Error loading leaderboard:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getRankIcon = (rank: number) => {
     switch (rank) {
@@ -34,7 +44,7 @@ export default function Leaderboard() {
     }
   };
 
-  const currentUserRank = leaderboard.findIndex(user => user.name === currentUser.name) + 1;
+  const currentUserRank = user ? leaderboard.findIndex(profile => profile.id === user.id) + 1 : 0;
 
   return (
     <div className="space-y-6">
@@ -68,15 +78,15 @@ export default function Leaderboard() {
             </div>
             <div className="text-center p-4 bg-accent/10 rounded-lg">
               <p className="text-sm text-muted-foreground">XP</p>
-              <p className="text-2xl font-bold text-accent">{currentUser.xp.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-accent">0</p>
             </div>
             <div className="text-center p-4 bg-profit/10 rounded-lg">
               <p className="text-sm text-muted-foreground">Level</p>
-              <p className="text-2xl font-bold text-profit">{currentUser.level}</p>
+              <p className="text-2xl font-bold text-profit">1</p>
             </div>
             <div className="text-center p-4 bg-warning/10 rounded-lg">
               <p className="text-sm text-muted-foreground">Balance</p>
-              <p className="text-2xl font-bold text-warning">{formatCurrency(currentUser.balance)}</p>
+              <p className="text-2xl font-bold text-warning">{formatCurrency(10000)}</p>
             </div>
           </div>
         </CardContent>
@@ -127,7 +137,7 @@ export default function Leaderboard() {
           <div className="space-y-3">
             {leaderboard.map((user, index) => {
               const rank = index + 1;
-              const isCurrentUser = user.name === currentUser.name;
+              const isCurrentUser = user && leaderboard[index].id === user.id;
               
               return (
                 <div 
