@@ -1,73 +1,90 @@
-# Welcome to your Lovable project
+# TradeSim Pro - Options Trading Simulator
 
-## Project info
+A comprehensive options trading simulator built with modern web technologies. Master options trading with real-time Black-Scholes pricing, portfolio tracking, and interactive learning features.
 
-**URL**: https://lovable.dev/projects/e8127ff9-2f6d-429f-acf2-f182c912c4e5
+## Features
 
-## How can I edit this code?
+- **Real-time Options Trading Simulation** - Practice trading with realistic market conditions
+- **Black-Scholes Pricing Model** - Advanced options pricing calculations
+- **Portfolio Management** - Track your trading performance and positions
+- **Interactive Quizzes** - Learn trading concepts through gamified education
+- **Leaderboard System** - Compete with other traders
+- **Authentication System** - Secure user accounts and progress tracking
 
-There are several ways of editing your application.
+## Technologies Used
 
-**Use Lovable**
+This project is built with modern web technologies:
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/e8127ff9-2f6d-429f-acf2-f182c912c4e5) and start prompting.
+- **Vite** - Fast build tool and development server
+- **TypeScript** - Type-safe JavaScript development
+- **React** - Component-based UI framework
+- **Tailwind CSS** - Utility-first CSS framework
+- **shadcn/ui** - Modern UI component library
+- **Supabase** - Backend-as-a-Service for authentication and data
+- **React Query** - Data fetching and state management
+- **React Router** - Client-side routing
 
-Changes made via Lovable will be committed automatically to this repo.
+## Getting Started
 
-**Use your preferred IDE**
+### Prerequisites
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- Node.js (v18 or higher)
+- npm or yarn package manager
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Installation
 
-Follow these steps:
+1. Clone the repository:
+```bash
+git clone <your-repo-url>
+cd trade-forge-quest
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+2. Install dependencies:
+```bash
+npm install
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+3. Set up environment variables:
+   - Copy `.env.example` to `.env.local`
+   - Configure your Supabase credentials
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+4. Start the development server:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The application will be available at `http://localhost:8080`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Available Scripts
 
-**Use GitHub Codespaces**
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run build:dev` - Build in development mode
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Project Structure
 
-## What technologies are used for this project?
+```
+src/
+├── components/          # Reusable UI components
+│   ├── ui/             # shadcn/ui components
+│   └── Layout.tsx      # Main layout component
+├── pages/              # Page components
+├── hooks/              # Custom React hooks
+├── lib/                # Utility functions and stores
+├── services/           # API services
+└── integrations/       # Third-party integrations
+```
 
-This project is built with:
+## Contributing
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## How can I deploy this project?
+## License
 
-Simply open [Lovable](https://lovable.dev/projects/e8127ff9-2f6d-429f-acf2-f182c912c4e5) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+This project is licensed under the MIT License - see the LICENSE file for details.
